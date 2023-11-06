@@ -1,8 +1,3 @@
-# DEPRECATED
-
-This repo is no longer maintained. 
-Check here for new version: https://github.com/Extensions-Valhalla/gnome-bluetooth-quick-connect
-
 # Bluetooth Quick Connect
 
 This extension allows paired Bluetooth devices to be connected and
