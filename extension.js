@@ -45,14 +45,14 @@ export default class BluetoothQuickConnect extends Extension {
 
   disable() {
     this._logger.log("Disabling extension");
+    this._removeDevicesFromMenu();
+    this._disconnectIdleMonitor();
     this._settings = null;
     this._logger = null;
     this._controller && this._controller.destroy();
     this._controller = null;
     this._menu = null;
     this._disconnectSignals();
-    this._removeDevicesFromMenu();
-    this._disconnectIdleMonitor();
   }
 
   _queueModify() {
