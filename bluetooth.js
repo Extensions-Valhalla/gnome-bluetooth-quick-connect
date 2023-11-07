@@ -14,97 +14,81 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-const GnomeBluetooth = imports.gi.GnomeBluetooth;
-const Signals = imports.signals;
-const GLib = imports.gi.GLib;
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Utils = Me.imports.utils;
+import GnomeBluetooth from "gi://GnomeBluetooth";
+import * as Signals from "resource:///org/gnome/shell/misc/signals.js";
 
-var BluetoothController = class {
-    constructor() {
-        this._client = new GnomeBluetooth.Client();
-        this._deviceNotifyConnected = new Set();
-        this._store = this._client.get_devices();
+export default class BluetoothController extends Signals.EventEmitter {
+  constructor() {
+    super();
+    this._client = new GnomeBluetooth.Client();
+    this._deviceNotifyConnected = new Set();
+    this._store = this._client.get_devices();
+  }
+
+  enable() {
+    this._connectSignal(this._client, "notify::default-adapter", () => {
+      this._deviceNotifyConnected.clear();
+      this.emit("default-adapter-changed");
+    });
+    this._connectSignal(this._client, "notify::default-adapter-powered", () => {
+      this._deviceNotifyConnected.clear();
+      this.emit("default-adapter-changed");
+    });
+    this._connectSignal(this._client, "device-removed", (c, path) => {
+      this._deviceNotifyConnected.delete(path);
+      this.emit("device-deleted", path);
+    });
+    this._connectSignal(this._client, "device-added", (c, device) => {
+      this._connectDeviceNotify(device);
+      this.emit("device-inserted", device);
+    });
+  }
+
+  getDevices() {
+    let devices = [];
+    for (let i = 0; i < this._store.get_n_items(); i++) {
+      let device = this._store.get_item(i);
+      devices.push(device);
     }
+    return devices;
+  }
 
-    enable() {
-        this._client.connect('notify::default-adapter', () => {
-            this._deviceNotifyConnected.clear();
-            this.emit('default-adapter-changed');
-        });
-        this._client.connect('notify::default-adapter-powered', () => {
-            this._deviceNotifyConnected.clear();
-            this.emit('default-adapter-changed');
-        });
-        this._client.connect('device-removed', (c, path) => {
-            this._deviceNotifyConnected.delete(path);
-            this.emit('device-deleted');
-        });
-        this._client.connect('device-added', (c, device) => {
-            this._connectDeviceNotify(device);
-            this.emit('device-inserted', new BluetoothDevice(device));
-        });
-    }
+  getConnectedDevices() {
+    return this.getDevices().filter(({ connected }) => connected);
+  }
 
-    _connectDeviceNotify(device) {
-        const path = device.get_object_path();
+  destroy() {
+    this._disconnectSignals();
+  }
 
-        if (this._deviceNotifyConnected.has(path))
-            return;
+  _connectDeviceNotify(device) {
+    const path = device.get_object_path();
 
-        device.connect('notify', (device) => {
-            this.emit('device-changed', new BluetoothDevice(device));
-        });
-    }
+    if (this._deviceNotifyConnected.has(path)) return;
 
-    getDevices() {
-        let devices = [];
+    this._deviceNotifyConnected.add(path);
+    this._connectSignal(device, "notify", (device) => {
+      this.emit("device-changed", device);
+    });
+  }
 
-        for (let i = 0; i < this._store.get_n_items(); i++) {
-            let device = new BluetoothDevice(this._store.get_item(i));
-            devices.push(device);
-        }
+  _connectSignal(subject, signal_name, method) {
+    if (!this._signals) this._signals = [];
 
-        return devices;
-    }
+    let signal_id = subject.connect(signal_name, method);
+    this._signals.push({
+      subject,
+      signal_id,
+    });
+  }
 
-    getConnectedDevices() {
-        return this.getDevices().filter((device) => {
-            return device.isConnected;
-        });
-    }
+  _disconnectSignals() {
+    if (!this._signals) return;
 
-    destroy() {
-        this._disconnectSignals();
-    }
-}
+    this._signals.forEach((signal) => {
+      signal.subject.disconnect(signal.signal_id);
+    });
 
-Signals.addSignalMethods(BluetoothController.prototype);
-Utils.addSignalsHelperMethods(BluetoothController.prototype);
-
-var BluetoothDevice = class {
-    constructor(dev) {
-        this.update(dev);
-    }
-
-    update(dev) {
-        this.name = dev.alias || dev.name;
-        this.icon = dev.icon;
-        this.isConnected = dev.connected;
-        this.isPaired = dev.paired;
-        this.mac = dev.address;
-    }
-
-    disconnect() {
-        Utils.spawn(`bluetoothctl -- disconnect ${this.mac}`)
-    }
-
-    connect() {
-        Utils.spawn(`bluetoothctl -- connect ${this.mac}`)
-    }
-
-    reconnect() {
-        Utils.spawn(`bluetoothctl -- disconnect ${this.mac} && sleep 7 && bluetoothctl -- connect ${this.mac}`)
-    }
+    this._signals = [];
+  }
 }

@@ -1,35 +1,24 @@
-# German translation for Bluetooth Quick Connect.
-# Copyright (C) 2023 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# German Translations for Bluetooth Quick Connect.
+# Copyright (C) 2023 Extensions Valhalla
+# This file is distributed under the same license as the Bluetooth Quick Connect package.
 #  <j.r@jugendhacker.de>, 2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: 1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-26 17:28+0100\n"
-"PO-Revision-Date: 2023-02-05 13:18+0100\n"
-"Last-Translator:  <j.r@jugendhacker.de>\n"
+"POT-Creation-Date: 2023-11-05 14:31+0530\n"
+"PO-Revision-Date: 2023-11-05 14:36+0530\n"
+"Last-Translator: j.r@jugendhacker.de\n"
 "Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.3.2\n"
 
-#: extension.js:97
-msgid "Bluetooth Quick Connect"
-msgstr "Bluetooth Quick Connect"
-
-#: extension.js:97
-msgid "Error trying to execute \"bluetoothctl\""
-msgstr "Fehler beim Ausführen von \"bluetoothctl\""
-
-#: quickSettings.js:43
-msgid "Bluetooth Settings"
-msgstr "Bluetooth Einstellungen"
-
-#: ui.js:197
+#: ui.js:164
 msgid "Wait"
 msgstr "Warte"
 

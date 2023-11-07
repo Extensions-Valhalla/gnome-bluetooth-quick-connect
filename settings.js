@@ -14,59 +14,40 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Gio = imports.gi.Gio;
-const GioSSS = Gio.SettingsSchemaSource;
+export default class Settings {
+  constructor(extension) {
+    this.settings = extension.getSettings();
+  }
 
-var Settings = class Settings {
-    constructor() {
-        this.settings = this._loadSettings();
-    }
+  isAutoPowerOnEnabled() {
+    return this.settings.get_boolean("bluetooth-auto-power-on");
+  }
 
-    isAutoPowerOnEnabled() {
-        return this.settings.get_boolean('bluetooth-auto-power-on');
-    }
+  isAutoPowerOffEnabled() {
+    return this.settings.get_boolean("bluetooth-auto-power-off");
+  }
 
-    isAutoPowerOffEnabled() {
-        return this.settings.get_boolean('bluetooth-auto-power-off');
-    }
+  autoPowerOffCheckingInterval() {
+    return this.settings.get_int("bluetooth-auto-power-off-interval");
+  }
 
-    autoPowerOffCheckingInterval() {
-        return this.settings.get_int('bluetooth-auto-power-off-interval');
-    }
+  isKeepMenuOnToggleEnabled() {
+    return this.settings.get_boolean("keep-menu-on-toggle");
+  }
 
-    isKeepMenuOnToggleEnabled() {
-        return this.settings.get_boolean('keep-menu-on-toggle');
-    }
+  isShowRefreshButtonEnabled() {
+    return this.settings.get_boolean("refresh-button-on");
+  }
 
-    isShowRefreshButtonEnabled() {
-        return this.settings.get_boolean('refresh-button-on');
-    }
+  isDebugModeEnabled() {
+    return this.settings.get_boolean("debug-mode-on");
+  }
 
-    isDebugModeEnabled() {
-        return this.settings.get_boolean('debug-mode-on');
-    }
+  isShowBatteryValueEnabled() {
+    return this.settings.get_boolean("show-battery-value-on");
+  }
 
-    isShowBatteryValueEnabled() {
-        return this.settings.get_boolean('show-battery-value-on');
-    }
-
-    isShowBatteryIconEnabled() {
-        return this.settings.get_boolean('show-battery-icon-on');
-    }
-
-    _loadSettings() {
-        let extension = ExtensionUtils.getCurrentExtension();
-        let schema = extension.metadata['settings-schema'];
-
-        let schemaSource = GioSSS.new_from_directory(
-            extension.dir.get_child('schemas').get_path(),
-            GioSSS.get_default(),
-            false
-        );
-
-        let schemaObj = schemaSource.lookup(schema, true);
-
-        return new Gio.Settings({ settings_schema: schemaObj });
-    }
-};
+  isShowBatteryIconEnabled() {
+    return this.settings.get_boolean("show-battery-icon-on");
+  }
+}
