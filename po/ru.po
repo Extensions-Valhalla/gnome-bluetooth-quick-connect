@@ -1,7 +1,7 @@
-# Translations Template File for Bluetooth Quick Connect
+# Russian Translations for Bluetooth Quick Connect.
 # Copyright (C) 2023 Extensions Valhalla
 # This file is distributed under the same license as the Bluetooth Quick Connect package.
-# Extensions Valhalla <extensions.valhalla@gmail.com>, 2023.
+# a1exak <a1.kamaev@yandex.ru>, 2023.
 #
 msgid ""
 msgstr ""
