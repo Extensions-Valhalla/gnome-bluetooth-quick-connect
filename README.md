@@ -24,7 +24,7 @@ Settings.
 </div>
 
 > [!NOTE]
-> This is a maintained fork of orignal Extension by [bjarosze](https://github.com/bjarosze).
+> This is a maintained fork of original Extension by [bjarosze](https://github.com/bjarosze).
 
 ## Installation
 
@@ -51,7 +51,22 @@ Headset battery (currently) requires enabling experimental features in `bluez`.
 
 See https://github.com/bjarosze/gnome-bluetooth-quick-connect/pull/42 for more details.
 
-### Guides
+#### Guides
 
 - [Enabling Experimental Features](https://wiki.archlinux.org/title/bluetooth#Enabling_experimental_features)
 - [Check Bluetooth headphones battery status in Linux](https://askubuntu.com/questions/1117563/check-bluetooth-headphones-battery-status-in-linux)
+
+### Bluetooth Menu Disappears when turned Off (Pop!OS)
+
+You may encounter an issue where the Bluetooth menu disappears when you turn off Bluetooth.
+
+To fix this issue you need to do the following:
+
+- Have **at-least one** device paired (this is important)
+- Run this command in terminal
+
+```bash
+gsettings set org.gnome.shell had-bluetooth-devices-setup true
+```
+
+Now you can restart your system and the Bluetooth menu should be fixed.
