@@ -204,7 +204,7 @@ export default class BluetoothQuickConnect extends Extension {
   _addDevicesToMenu(skipDevice = null) {
     this._controller
       .getDevices()
-      .sort((a, b) => a.name.localeCompare(b.name))
+      .sort((a, b) => a.name && a.name.localeCompare(b.name))
       .forEach((device) => {
         if (device.paired && device.get_object_path() !== skipDevice) {
           this._addMenuItem(device);
