@@ -33,8 +33,10 @@ export default defineConfig({
 });
 
 const packExtension = async () => {
-  const files = (await fs.readdir("./dist")).map((file) => `--extra-source=./dist/${file}`);
-  await $`gnome-extensions pack -f ${files} -o ./dist`;
+  const files = (await fs.readdir("./dist"))
+    .filter((f) => fs.statSync(`./dist/${f}`).isFile())
+    .map((file) => `--extra-source=./${file}`);
+  await $`cd dist && gnome-extensions pack -f ${files} -o ./`;
 };
 
 const copyAssets = () => fs.copy("./assets", "./dist");
