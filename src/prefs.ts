@@ -1,49 +1,38 @@
-// Copyright 2018 Bartosz Jaroszewski
-// SPDX-License-Identifier: GPL-2.0-or-later
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 import Gtk from "gi://Gtk";
 import Adw from "gi://Adw";
 import Gio from "gi://Gio";
-import {
-  ExtensionPreferences,
-  gettext as _,
-} from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
+import { ExtensionPreferences } from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
+import type { ExtensionMetadata } from "resource:///org/gnome/shell/extensions/extension.js";
 
 export default class BluetoothQuickConnectPreferences extends ExtensionPreferences {
-  constructor(extension) {
+  _extension: ExtensionMetadata;
+  _settings: Gio.Settings | null = null;
+  _builder: Gtk.Builder | null = null;
+  _widget: Gtk.Widget | null = null;
+
+  constructor(extension: ExtensionMetadata) {
     super(extension);
     this._extension = extension;
   }
 
-  _build(settings) {
+  _build(settings: Gio.Settings) {
     this._settings = settings;
     this._builder = new Gtk.Builder();
     this._builder.add_from_file(this._extension.path + "/Settings.ui");
 
-    this._widget = this._builder.get_object("items_container");
+    this._widget = this._builder.get_object("items_container") as Gtk.Widget;
 
-    this._builder.get_object("auto_power_off_settings_button").connect("clicked", () => {
+    this._builder.get_object("auto_power_off_settings_button")?.connect("clicked", () => {
       let dialog = new Gtk.Dialog({
         title: "Auto power off settings",
-        transient_for: this._widget.get_ancestor(Gtk.Window),
+        // @ts-expect-error, wrong types maybe
+        transient_for: this._widget?.get_ancestor(Gtk.Window),
+        // @ts-expect-error, technical limitation, uses boolean
         use_header_bar: true,
         modal: true,
       });
 
-      let box = this._builder.get_object("auto_power_off_settings");
+      let box = this._builder?.get_object("auto_power_off_settings") as Gtk.Box;
       dialog.get_content_area().append(box);
 
       dialog.connect("response", (dialog) => {
@@ -60,7 +49,9 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
   }
 
   _bind() {
-    let autoPowerOnSwitch = this._builder.get_object("auto_power_on_switch");
+    if (!this._settings || !this._builder) return;
+
+    let autoPowerOnSwitch = this._builder.get_object("auto_power_on_switch")!;
     this._settings.bind(
       "bluetooth-auto-power-on",
       autoPowerOnSwitch,
@@ -68,7 +59,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let autoPowerOffSwitch = this._builder.get_object("auto_power_off_switch");
+    let autoPowerOffSwitch = this._builder.get_object("auto_power_off_switch")!;
     this._settings.bind(
       "bluetooth-auto-power-off",
       autoPowerOffSwitch,
@@ -76,7 +67,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let autoPowerOffInterval = this._builder.get_object("auto_power_off_interval");
+    let autoPowerOffInterval = this._builder.get_object("auto_power_off_interval")!;
     this._settings.bind(
       "bluetooth-auto-power-off-interval",
       autoPowerOffInterval,
@@ -84,7 +75,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let keepMenuOnToggleSwitch = this._builder.get_object("keep_menu_on_toggle");
+    let keepMenuOnToggleSwitch = this._builder.get_object("keep_menu_on_toggle")!;
     this._settings.bind(
       "keep-menu-on-toggle",
       keepMenuOnToggleSwitch,
@@ -92,7 +83,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let refreshButtonOnSwitch = this._builder.get_object("refresh_button_on");
+    let refreshButtonOnSwitch = this._builder.get_object("refresh_button_on")!;
     this._settings.bind(
       "refresh-button-on",
       refreshButtonOnSwitch,
@@ -100,7 +91,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let debugModeOnSwitch = this._builder.get_object("debug_mode_on");
+    let debugModeOnSwitch = this._builder.get_object("debug_mode_on")!;
     this._settings.bind(
       "debug-mode-on",
       debugModeOnSwitch,
@@ -108,7 +99,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let batteryValueOnSwitch = this._builder.get_object("show_battery_value_on");
+    let batteryValueOnSwitch = this._builder.get_object("show_battery_value_on")!;
     this._settings.bind(
       "show-battery-value-on",
       batteryValueOnSwitch,
@@ -116,7 +107,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let batteryIconOnSwitch = this._builder.get_object("show_battery_icon_on");
+    let batteryIconOnSwitch = this._builder.get_object("show_battery_icon_on")!;
     this._settings.bind(
       "show-battery-icon-on",
       batteryIconOnSwitch,
@@ -125,7 +116,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
     );
   }
 
-  fillPreferencesWindow(window) {
+  fillPreferencesWindow(window: Adw.PreferencesWindow) {
     const widget = this._build(this.getSettings());
     const page = new Adw.PreferencesPage();
     const group = new Adw.PreferencesGroup();

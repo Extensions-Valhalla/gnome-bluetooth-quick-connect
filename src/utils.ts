@@ -14,17 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import type Settings from "./settings.js";
+
 export class Logger {
-  constructor(settings) {
+  _enabled: boolean;
+  constructor(settings: Settings) {
     this._enabled = settings.isDebugModeEnabled();
   }
 
-  log(message) {
+  log(message: string) {
     if (!this._enabled) return;
     console.log(`[bluetooth-quick-connect] ${message}`);
   }
 
-  warn(message) {
+  warn(message: any) {
     console.warn(`[bluetooth-quick-connect WARNING] ${message}`);
   }
 }

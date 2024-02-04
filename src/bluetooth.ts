@@ -1,23 +1,13 @@
-// Copyright 2018 Bartosz Jaroszewski
-// SPDX-License-Identifier: GPL-2.0-or-later
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 import GnomeBluetooth from "gi://GnomeBluetooth";
 import * as Signals from "resource:///org/gnome/shell/misc/signals.js";
+import type Gio from "gi://Gio";
 
 export default class BluetoothController extends Signals.EventEmitter {
+  _client: GnomeBluetooth.Client;
+  _deviceNotifyConnected: Set<string>;
+  _store: Gio.ListStore<GnomeBluetooth.Device>;
+  _signals: Array<{ subject: SignalConnectable; signal_id: number }> = [];
+
   constructor() {
     super();
     this._client = new GnomeBluetooth.Client();
@@ -47,7 +37,7 @@ export default class BluetoothController extends Signals.EventEmitter {
   getDevices() {
     let devices = [];
     for (let i = 0; i < this._store.get_n_items(); i++) {
-      let device = this._store.get_item(i);
+      let device = this._store.get_item(i) as GnomeBluetooth.Device;
       devices.push(device);
     }
     return devices;
@@ -61,7 +51,7 @@ export default class BluetoothController extends Signals.EventEmitter {
     this._disconnectSignals();
   }
 
-  _connectDeviceNotify(device) {
+  _connectDeviceNotify(device: GnomeBluetooth.Device) {
     const path = device.get_object_path();
 
     if (this._deviceNotifyConnected.has(path)) return;
@@ -72,7 +62,17 @@ export default class BluetoothController extends Signals.EventEmitter {
     });
   }
 
-  _connectSignal(subject, signal_name, method) {
+  _connectSignal<T extends keyof BluetoothClientEvents>(
+    subject: SignalConnectable,
+    signal_name: T,
+    method: BluetoothClientEvents[T],
+  ): void;
+  _connectSignal<T extends keyof BluetoothControllerEvents>(
+    subject: SignalConnectable,
+    signal_name: T,
+    method: BluetoothControllerEvents[T],
+  ): void;
+  _connectSignal(subject: SignalConnectable, signal_name: string, method: (...args: any[]) => any) {
     if (!this._signals) this._signals = [];
 
     let signal_id = subject.connect(signal_name, method);
@@ -91,4 +91,19 @@ export default class BluetoothController extends Signals.EventEmitter {
 
     this._signals = [];
   }
+}
+
+export interface BluetoothControllerEvents {
+  "default-adapter-changed": (ctrl: BluetoothController) => void;
+  "device-changed": (ctrl: BluetoothController, device: GnomeBluetooth.Device) => void;
+  "device-deleted": (ctrl: BluetoothController, path: string) => void;
+  "device-inserted": (ctrl: BluetoothController, device: GnomeBluetooth.Device) => void;
+  notify: (ctrl: BluetoothController) => void;
+}
+
+export interface BluetoothClientEvents {
+  "device-added": (ctrl: GnomeBluetooth.Client, device: GnomeBluetooth.Device) => void;
+  "device-removed": (ctrl: GnomeBluetooth.Client, path: string) => void;
+  "notify::default-adapter": (ctrl: GnomeBluetooth.Client) => void;
+  "notify::default-adapter-powered": (ctrl: GnomeBluetooth.Client) => void;
 }

@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "private": "true",
   "description": "Allow to connect to paired devices from gnome control panel.\n",
+  "type": "module",
   "scripts": {
-    "clean": "rm -fr bluetooth-quick-connect@bjarosze.gmail.com.shell-extension.zip schemas/gschemas.compiled po/*.mo",
-    "extension:build": "gnome-extensions pack -f --extra-source=bluetooth.js --extra-source=settings.js --extra-source=Settings.ui --extra-source=ui.js --extra-source=utils.js -o .",
-    "extension:install": "pnpm run extension:build && gnome-extensions install bluetooth-quick-connect@bjarosze.gmail.com.shell-extension.zip",
-    "translation:update-pot": "xgettext --from-code=UTF-8 extension.js ui.js Settings.ui -o po/bluetooth-quick-connect.pot",
+    "clean": "rm -fr dist",
+    "build": "pnpm clean && tsup",
+    "extension-install": "pnpm build && gnome-extensions install dist/*.shell-extension.zip -f",
+    "update-pot": "xgettext --from-code=UTF-8 extension.js ui.js Settings.ui -o po/bluetooth-quick-connect.pot",
     "format": "prettier --write *.{js,md,json}"
   },
   "prettier": {
@@ -17,7 +18,13 @@
     "trailingComma": "all",
     "printWidth": 100
   },
+  "sideEffects": false,
   "devDependencies": {
-    "prettier": "^3.0.3"
+    "@girs/gjs": "^3.2.7",
+    "@girs/gnome-shell": "45.0.0-beta8",
+    "prettier": "^3.0.3",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "zx": "^7.2.3"
   }
 }

@@ -1,30 +1,27 @@
-// Copyright 2018 Bartosz Jaroszewski
-// SPDX-License-Identifier: GPL-2.0-or-later
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 import * as Main from "resource:///org/gnome/shell/ui/main.js";
 import * as PopupMenu from "resource:///org/gnome/shell/ui/popupMenu.js";
-import { Extension, gettext as _ } from "resource:///org/gnome/shell/extensions/extension.js";
+import {
+  Extension,
+  type ExtensionMetadata,
+} from "resource:///org/gnome/shell/extensions/extension.js";
 import GLib from "gi://GLib";
 import { Logger } from "./utils.js";
 import Settings from "./settings.js";
-import BluetoothController from "./bluetooth.js";
-import { PopupBluetoothDeviceMenuItem } from "./ui.js";
+import BluetoothController, { type BluetoothControllerEvents } from "./bluetooth.js";
+import { PopupBluetoothDeviceMenuItem, type PopupSwitchWithButtonMenuItem } from "./ui.js";
+import type GnomeBluetooth from "gi://GnomeBluetooth";
 
 export default class BluetoothQuickConnect extends Extension {
-  constructor(metadata) {
+  _settings!: Settings;
+  _logger!: Logger;
+  _controller!: BluetoothController;
+  _menu!: PopupMenu.PopupMenuSection;
+  _items: Record<string, PopupSwitchWithButtonMenuItem> = {};
+  _proxy: any = null;
+  _signals: Array<{ subject: SignalConnectable; signal_id: number }> = [];
+  _idleMonitorId: number | null = null;
+
+  constructor(metadata: ExtensionMetadata) {
     super(metadata);
   }
 
@@ -47,10 +44,14 @@ export default class BluetoothQuickConnect extends Extension {
     this._logger.log("Disabling extension");
     this._removeDevicesFromMenu();
     this._disconnectIdleMonitor();
+    // @ts-expect-error, GJS disposal
     this._settings = null;
+    // @ts-expect-error, GJS disposal
     this._logger = null;
     this._controller && this._controller.destroy();
+    // @ts-expect-error, GJS disposal
     this._controller = null;
+    // @ts-expect-error, GJS disposal
     this._menu = null;
     this._disconnectSignals();
   }
@@ -78,8 +79,11 @@ export default class BluetoothQuickConnect extends Extension {
   _connectMenuSignals() {
     this._connectSignal(this._menu, "open-state-changed", (_menu, isOpen) => {
       this._logger.log(`Menu toggled: ${isOpen}`);
-      if (isOpen) this._disconnectIdleMonitor();
-      else this._connectIdleMonitor();
+      if (isOpen) {
+        this._disconnectIdleMonitor();
+      } else {
+        this._connectIdleMonitor();
+      }
 
       if (isOpen && this._settings.isAutoPowerOnEnabled() && this._proxy.BluetoothAirplaneMode) {
         this._logger.log("Disabling airplane mode");
@@ -121,13 +125,13 @@ export default class BluetoothQuickConnect extends Extension {
     });
   }
 
-  _syncMenuItem(device) {
+  _syncMenuItem(device: GnomeBluetooth.Device) {
     this._logger.log(`Synchronizing device menu item: ${device.alias || device.name}`);
-    let item = this._items[device.address] || this._addMenuItem(device);
+    let item = this._items[device.address || ""] || this._addMenuItem(device);
     item.sync(device);
   }
 
-  _addMenuItem(device) {
+  _addMenuItem(device: GnomeBluetooth.Device) {
     this._logger.log(`Adding device menu item: ${device.alias || device.name} ${device.address}`);
 
     let menuItem = new PopupBluetoothDeviceMenuItem(
@@ -142,7 +146,7 @@ export default class BluetoothQuickConnect extends Extension {
       },
     );
 
-    this._items[device.address] = menuItem;
+    this._items[device.address || ""] = menuItem;
     this._menu.addMenuItem(menuItem);
     return menuItem;
   }
@@ -175,7 +179,17 @@ export default class BluetoothQuickConnect extends Extension {
     this._idleMonitorId = null;
   }
 
-  _connectSignal(subject, signal_name, method) {
+  _connectSignal<T extends keyof BluetoothControllerEvents>(
+    subject: SignalConnectable,
+    signal_name: T,
+    method: BluetoothControllerEvents[T],
+  ): void;
+  _connectSignal<T extends keyof PopupMenuEvents>(
+    subject: SignalConnectable,
+    signal_name: T,
+    method: PopupMenuEvents[T],
+  ): void;
+  _connectSignal(subject: SignalConnectable, signal_name: string, method: (...args: any[]) => any) {
     if (!this._signals) this._signals = [];
 
     let signal_id = subject.connect(signal_name, method);
@@ -195,16 +209,19 @@ export default class BluetoothQuickConnect extends Extension {
     this._signals = [];
   }
 
-  _refresh(skipDevice = null) {
+  _refresh(skipDevice: string | null = null) {
     this._removeDevicesFromMenu();
     this._addDevicesToMenu(skipDevice);
     this._logger.log("Refreshing devices list");
   }
 
-  _addDevicesToMenu(skipDevice = null) {
+  _addDevicesToMenu(skipDevice: string | null = null) {
     this._controller
       .getDevices()
-      .sort((a, b) => a.name && a.name.localeCompare(b.name))
+      .sort((a, b) => {
+        if (!a.name) return 0;
+        return a.name.localeCompare(b.name || "");
+      })
       .forEach((device) => {
         if (device.paired && device.get_object_path() !== skipDevice) {
           this._addMenuItem(device);
@@ -218,4 +235,8 @@ export default class BluetoothQuickConnect extends Extension {
     Object.values(this._items).forEach((item) => item.destroy());
     this._items = {};
   }
+}
+
+interface PopupMenuEvents {
+  "open-state-changed": (menu: PopupMenu.PopupMenu, isOpen: boolean) => void;
 }

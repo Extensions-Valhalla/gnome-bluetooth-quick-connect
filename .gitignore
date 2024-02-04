@@ -1,4 +1,5 @@
 /schemas/gschemas.compiled
 /node_modules
-/bluetooth-quick-connect@bjarosze.gmail.com.shell-extension.zip
+*.shell-extension.zip
 /po/*.mo
+dist
