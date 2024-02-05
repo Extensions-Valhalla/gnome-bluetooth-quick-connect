@@ -10,8 +10,8 @@
     "extension-install": "pnpm build && gnome-extensions install dist/*.shell-extension.zip -f",
     "update-pot": "xgettext --from-code=UTF-8 extension.js ui.js Settings.ui -o po/bluetooth-quick-connect.pot",
     "format": "biome format --write ./**/*.ts",
-    "lint": "biome lint ./**/*.ts && tsc",
-    "fix": "biome lint --apply ./**/*.ts"
+    "fix": "biome lint --apply ./**/*.ts",
+    "lint": "biome lint ./**/*.ts && biome format ./**/*.ts && tsc"
   },
   "sideEffects": false,
   "devDependencies": {
