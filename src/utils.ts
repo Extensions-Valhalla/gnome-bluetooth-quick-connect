@@ -11,7 +11,7 @@ export class Logger {
     console.log(`[bluetooth-quick-connect] ${message}`);
   }
 
-  warn(message: any) {
+  warn(message: string) {
     console.warn(`[bluetooth-quick-connect WARNING] ${message}`);
   }
 }

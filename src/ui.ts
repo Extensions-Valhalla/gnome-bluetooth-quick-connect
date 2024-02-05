@@ -1,11 +1,11 @@
-import Clutter from "gi://Clutter";
-import GObject from "gi://GObject";
-import St from "gi://St";
-import GLib from "gi://GLib";
-import * as PopupMenu from "resource:///org/gnome/shell/ui/popupMenu.js";
-import type GnomeBluetooth from "gi://GnomeBluetooth";
 import type { Logger } from "./utils.js";
+import Clutter from "gi://Clutter";
+import GLib from "gi://GLib";
+import GObject from "gi://GObject";
+import type GnomeBluetooth from "gi://GnomeBluetooth";
+import St from "gi://St";
 import { gettext as _ } from "resource:///org/gnome/shell/extensions/extension.js";
+import * as PopupMenu from "resource:///org/gnome/shell/ui/popupMenu.js";
 
 type PopupSwitchParams = {
   showRefreshButton: boolean;
@@ -33,7 +33,7 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
     logger: Logger,
     params: PopupSwitchParams,
   ) {
-    let label = device.alias || device.name || "(unknown)";
+    const label = device.alias || device.name || "(unknown)";
 
     super(label, device.connected, {});
 
@@ -47,7 +47,7 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
     this._closeMenuOnAction = params.closeMenuOnAction;
 
     this.actor.labelActor.x_expand = true;
-    // @ts-expect-error
+    // @ts-expect-error, private property
     this.actor._statusBin.x_expand = false;
 
     this._refreshButton = this._buildRefreshButton();
@@ -66,7 +66,7 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
   _handleIcon(device: GnomeBluetooth.Device) {
     if (!device.icon) return;
 
-    let deviceIcon = new St.Icon({
+    const deviceIcon = new St.Icon({
       style_class: "popup-menu-icon",
       icon_name: device.icon,
     });
@@ -111,13 +111,13 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
   }
 
   _buildRefreshButton() {
-    let icon = new St.Icon({
+    const icon = new St.Icon({
       icon_name: "view-refresh",
       style_class: "popup-menu-icon",
       opacity: 155,
     });
 
-    let button = new St.Button({
+    const button = new St.Button({
       child: icon,
       x_align: 2, // Align.END
     });
@@ -167,7 +167,7 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
   }
 
   _buildPendingLabel() {
-    let label = new St.Label({ text: _("Wait") });
+    const label = new St.Label({ text: _("Wait") });
     label.hide();
 
     return label;
@@ -187,16 +187,19 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
   }
 
   activate(event: Clutter.Event) {
-    // @ts-expect-error
+    // @ts-expect-error, private property
     if (this.actor._switch.mapped) {
       this.toggle();
-      // @ts-expect-error
+      // @ts-expect-error, private property
       this.actor._switch.toggle(); // toggle back, state will be updated by signal
     }
 
     // we allow pressing space to toggle the switch
     // without closing the menu
-    if (event.type() == Clutter.EventType.KEY_PRESS && event.get_key_symbol() == Clutter.KEY_space)
+    if (
+      event.type() === Clutter.EventType.KEY_PRESS &&
+      event.get_key_symbol() === Clutter.KEY_space
+    )
       return;
 
     if (this._closeMenuOnAction) this.emit("activate", event);
@@ -209,7 +212,7 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
 
   _enablePending() {
     this._refreshButton.reactive = false;
-    // @ts-expect-error
+    // @ts-expect-error, private property
     this.actor._switch.hide();
     this._pendingLabel.show();
     this.reactive = false;
@@ -217,7 +220,7 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
 
   _disablePending() {
     this._refreshButton.reactive = true;
-    // @ts-expect-error
+    // @ts-expect-error, private property
     this.actor._switch.show();
     this._pendingLabel.hide();
     this.reactive = true;
@@ -270,8 +273,8 @@ class BatteryInfoWidgetClass extends St.BoxLayout {
     } else {
       this._label.text = `${value}%`;
 
-      let fillLevel = 10 * Math.floor(value / 10);
-      let iconName = `battery-level-${fillLevel}-symbolic`;
+      const fillLevel = 10 * Math.floor(value / 10);
+      const iconName = `battery-level-${fillLevel}-symbolic`;
       this._icon.icon_name = iconName;
     }
   }

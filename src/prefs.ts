@@ -1,6 +1,6 @@
-import Gtk from "gi://Gtk";
 import Adw from "gi://Adw";
 import Gio from "gi://Gio";
+import Gtk from "gi://Gtk";
 import { ExtensionPreferences } from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
 import type { ExtensionMetadata } from "resource:///org/gnome/shell/extensions/extension.js";
 
@@ -18,12 +18,12 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
   _build(settings: Gio.Settings) {
     this._settings = settings;
     this._builder = new Gtk.Builder();
-    this._builder.add_from_file(this._extension.path + "/Settings.ui");
+    this._builder.add_from_file(`${this._extension.path}/Settings.ui`);
 
     this._widget = this._builder.get_object("items_container") as Gtk.Widget;
 
     this._builder.get_object("auto_power_off_settings_button")?.connect("clicked", () => {
-      let dialog = new Gtk.Dialog({
+      const dialog = new Gtk.Dialog({
         title: "Auto power off settings",
         // @ts-expect-error, wrong types maybe
         transient_for: this._widget?.get_ancestor(Gtk.Window),
@@ -32,7 +32,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
         modal: true,
       });
 
-      let box = this._builder?.get_object("auto_power_off_settings") as Gtk.Box;
+      const box = this._builder?.get_object("auto_power_off_settings") as Gtk.Box;
       dialog.get_content_area().append(box);
 
       dialog.connect("response", (dialog) => {
@@ -51,7 +51,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
   _bind() {
     if (!this._settings || !this._builder) return;
 
-    let autoPowerOnSwitch = this._builder.get_object("auto_power_on_switch")!;
+    const autoPowerOnSwitch = this._builder.get_object("auto_power_on_switch")!;
     this._settings.bind(
       "bluetooth-auto-power-on",
       autoPowerOnSwitch,
@@ -59,7 +59,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let autoPowerOffSwitch = this._builder.get_object("auto_power_off_switch")!;
+    const autoPowerOffSwitch = this._builder.get_object("auto_power_off_switch")!;
     this._settings.bind(
       "bluetooth-auto-power-off",
       autoPowerOffSwitch,
@@ -67,7 +67,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let autoPowerOffInterval = this._builder.get_object("auto_power_off_interval")!;
+    const autoPowerOffInterval = this._builder.get_object("auto_power_off_interval")!;
     this._settings.bind(
       "bluetooth-auto-power-off-interval",
       autoPowerOffInterval,
@@ -75,7 +75,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let keepMenuOnToggleSwitch = this._builder.get_object("keep_menu_on_toggle")!;
+    const keepMenuOnToggleSwitch = this._builder.get_object("keep_menu_on_toggle")!;
     this._settings.bind(
       "keep-menu-on-toggle",
       keepMenuOnToggleSwitch,
@@ -83,7 +83,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let refreshButtonOnSwitch = this._builder.get_object("refresh_button_on")!;
+    const refreshButtonOnSwitch = this._builder.get_object("refresh_button_on")!;
     this._settings.bind(
       "refresh-button-on",
       refreshButtonOnSwitch,
@@ -91,7 +91,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let debugModeOnSwitch = this._builder.get_object("debug_mode_on")!;
+    const debugModeOnSwitch = this._builder.get_object("debug_mode_on")!;
     this._settings.bind(
       "debug-mode-on",
       debugModeOnSwitch,
@@ -99,7 +99,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let batteryValueOnSwitch = this._builder.get_object("show_battery_value_on")!;
+    const batteryValueOnSwitch = this._builder.get_object("show_battery_value_on")!;
     this._settings.bind(
       "show-battery-value-on",
       batteryValueOnSwitch,
@@ -107,7 +107,7 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
       Gio.SettingsBindFlags.DEFAULT,
     );
 
-    let batteryIconOnSwitch = this._builder.get_object("show_battery_icon_on")!;
+    const batteryIconOnSwitch = this._builder.get_object("show_battery_icon_on")!;
     this._settings.bind(
       "show-battery-icon-on",
       batteryIconOnSwitch,

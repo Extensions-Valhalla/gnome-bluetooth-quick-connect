@@ -1,6 +1,6 @@
+import type Gio from "gi://Gio";
 import GnomeBluetooth from "gi://GnomeBluetooth";
 import * as Signals from "resource:///org/gnome/shell/misc/signals.js";
-import type Gio from "gi://Gio";
 
 export default class BluetoothController extends Signals.EventEmitter {
   _client: GnomeBluetooth.Client;
@@ -35,9 +35,9 @@ export default class BluetoothController extends Signals.EventEmitter {
   }
 
   getDevices() {
-    let devices = [];
+    const devices = [];
     for (let i = 0; i < this._store.get_n_items(); i++) {
-      let device = this._store.get_item(i) as GnomeBluetooth.Device;
+      const device = this._store.get_item(i) as GnomeBluetooth.Device;
       devices.push(device);
     }
     return devices;
@@ -72,10 +72,14 @@ export default class BluetoothController extends Signals.EventEmitter {
     signal_name: T,
     method: BluetoothControllerEvents[T],
   ): void;
-  _connectSignal(subject: SignalConnectable, signal_name: string, method: (...args: any[]) => any) {
+  _connectSignal(
+    subject: SignalConnectable,
+    signal_name: string,
+    method: (...args: unknown[]) => unknown,
+  ) {
     if (!this._signals) this._signals = [];
 
-    let signal_id = subject.connect(signal_name, method);
+    const signal_id = subject.connect(signal_name, method);
     this._signals.push({
       subject,
       signal_id,
@@ -85,25 +89,10 @@ export default class BluetoothController extends Signals.EventEmitter {
   _disconnectSignals() {
     if (!this._signals) return;
 
-    this._signals.forEach((signal) => {
+    for (const signal of this._signals) {
       signal.subject.disconnect(signal.signal_id);
-    });
+    }
 
     this._signals = [];
   }
-}
-
-export interface BluetoothControllerEvents {
-  "default-adapter-changed": (ctrl: BluetoothController) => void;
-  "device-changed": (ctrl: BluetoothController, device: GnomeBluetooth.Device) => void;
-  "device-deleted": (ctrl: BluetoothController, path: string) => void;
-  "device-inserted": (ctrl: BluetoothController, device: GnomeBluetooth.Device) => void;
-  notify: (ctrl: BluetoothController) => void;
-}
-
-export interface BluetoothClientEvents {
-  "device-added": (ctrl: GnomeBluetooth.Client, device: GnomeBluetooth.Device) => void;
-  "device-removed": (ctrl: GnomeBluetooth.Client, path: string) => void;
-  "notify::default-adapter": (ctrl: GnomeBluetooth.Client) => void;
-  "notify::default-adapter-powered": (ctrl: GnomeBluetooth.Client) => void;
 }
