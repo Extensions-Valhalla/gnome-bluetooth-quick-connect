@@ -1,5 +1,5 @@
 import { defineConfig } from "tsup";
-import { $, fs } from "zx";
+import { fs, $ } from "zx";
 
 export default defineConfig({
   entry: ["src/*.ts"],
@@ -27,6 +27,7 @@ export default defineConfig({
     ].join("\n"),
   },
   onSuccess: async () => {
+    if (process.argv.includes("--no-bundle")) return;
     await copyAssets();
     await packExtension();
   },
