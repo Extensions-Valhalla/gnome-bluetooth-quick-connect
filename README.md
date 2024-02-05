@@ -41,7 +41,7 @@ Make sure you have Node.js and `pnpm` installed
 git clone https://github.com/Extensions-Valhalla/gnome-bluetooth-quick-connect
 cd gnome-bluetooth-quick-connect
 pnpm install
-pnpm extension:install
+pnpm extension-install
 ```
 
 ## 🛠️ Troubleshooting Guide
@@ -50,7 +50,7 @@ pnpm extension:install
 
 Headset battery (currently) requires enabling experimental features in `bluez`.
 
-See https://github.com/bjarosze/gnome-bluetooth-quick-connect/pull/42 for more details.
+See <https://github.com/bjarosze/gnome-bluetooth-quick-connect/pull/42> for more details.
 
 #### 📖 Guides
 
@@ -85,19 +85,19 @@ If you want to help translate this extension, carry on reading.
 You need to first [fork](https://docs.github.com/en/get-started/quickstart/contributing-to-projects#about-forking) this repository and then [clone](https://docs.github.com/en/get-started/quickstart/contributing-to-projects#cloning-a-fork) it to your local machine.
 
 ```bash
-git clone https://github.com/<your-username>/gnome-bluetooth-quick-connect
+git clone https://github.com/[your-username]/gnome-bluetooth-quick-connect
 cd gnome-bluetooth-quick-connect
 ```
 
-Now you need to create a new branch for your changes. For translations, you may want to use `translate/<language-code>` as the branch name.
+Now you need to create a new branch for your changes. For translations, you may want to use `translate/[language-code]` as the branch name.
 
 ```bash
-git checkout -b translate/<language-code>
+git checkout -b translate/[language-code]
 ```
 
 Now you might want to install a [translation editor](https://wiki.gnome.org/TranslationProject/LocalisationGuide#Translation_Editors) to make the process easier. We suggest using [Poedit](https://poedit.net/).
 
-Open the translation app and choose Create new translation from POT file. Now select the `pot` file from the `po` folder. Choose the language you want to translate to and start translating.
+Open the translation app and choose Create new translation from POT file. Now select the `pot` file from the `assets/po` folder. Choose the language you want to translate to and start translating.
 
 After you are done translating, save the file. You might want to preview the translations. See [Installation from Source Code](#🎋-installation-from-source-code) to get the local copy of the extension installed. Then restart the shell by logging out and logging back in. Then enable the extension.
 
@@ -109,13 +109,13 @@ If everything looks good, you can commit your changes.
 
 ```bash
 git add .
-git commit -m "Add <language-name> translation"
+git commit -m "Add [language-name] translation"
 ```
 
 Now you need to push the changes to your forked repository.
 
 ```bash
-git push origin translate/<language-code>
+git push origin translate/[language-code]
 ```
 
 Now you need to create a [Pull Request](https://docs.github.com/en/get-started/quickstart/contributing-to-projects#making-a-pull-request) to the original repository. And you are done!
