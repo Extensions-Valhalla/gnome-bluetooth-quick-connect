@@ -123,5 +123,12 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
     group.add(widget);
     page.add(group);
     window.add(page);
+    window.connect("close-request", () => {
+      // @ts-expect-error, GJS disposal
+      this._extension = null;
+      this._settings = null;
+      this._builder = null;
+      this._widget = null;
+    });
   }
 }
