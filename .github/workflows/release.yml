@@ -37,7 +37,7 @@ jobs:
         with:
           files: dist/shell-extension.zip
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ github.ref }}
-          body: "Release ${{ github.ref }}"
+          tag_name: ${{ github.ref_name }}
+          body: "Release ${{ github.ref_name }}"
           draft: false
           prerelease: false
