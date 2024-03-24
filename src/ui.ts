@@ -46,9 +46,9 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
     this._showRefreshButton = params.showRefreshButton;
     this._closeMenuOnAction = params.closeMenuOnAction;
 
-    this.actor.labelActor.x_expand = true;
+    this.actor.labelActor.xExpand = true;
     // @ts-expect-error, private property
-    this.actor._statusBin.x_expand = false;
+    this.actor._statusBin.xExpand = false;
 
     this._refreshButton = this._buildRefreshButton();
     this._pendingLabel = this._buildPendingLabel();
@@ -67,8 +67,8 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
     if (!device.icon) return;
 
     const deviceIcon = new St.Icon({
-      style_class: "popup-menu-icon",
-      icon_name: device.icon,
+      styleClass: "popup-menu-icon",
+      iconName: device.icon,
     });
     this.insert_child_at_index(deviceIcon, 1);
   }
@@ -100,26 +100,26 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
     this._disablePending();
 
     if (device.connected) {
-      if (device.battery_percentage && device.battery_percentage > 0) {
+      if (device.batteryPercentage && device.batteryPercentage > 0) {
         this._batteryInfo.show();
         this._logger.log(
-          `Battery percentage ${device.alias || device.name}: ${device.battery_percentage}`,
+          `Battery percentage ${device.alias || device.name}: ${device.batteryPercentage}`,
         );
-        this._batteryInfo.setPercentage(device.battery_percentage);
+        this._batteryInfo.setPercentage(device.batteryPercentage);
       }
     }
   }
 
   _buildRefreshButton() {
     const icon = new St.Icon({
-      icon_name: "view-refresh",
-      style_class: "popup-menu-icon",
+      iconName: "view-refresh",
+      styleClass: "popup-menu-icon",
       opacity: 155,
     });
 
     const button = new St.Button({
       child: icon,
-      x_align: 2, // Align.END
+      xAlign: 2, // Align.END
     });
 
     button.connect("enter-event", (widget) => {
@@ -244,20 +244,20 @@ class BatteryInfoWidgetClass extends St.BoxLayout {
   constructor(showBatteryValue: boolean, showBatteryIcon: boolean) {
     super({ visible: false, style: "spacing: 3px;" });
 
-    this._icon = new St.Icon({ style_class: "popup-menu-icon" });
+    this._icon = new St.Icon({ styleClass: "popup-menu-icon" });
     this.add_child(this._icon);
-    this._icon.icon_name = null;
+    this._icon.iconName = null;
 
     // dirty trick: instantiate the label with text 100%, so we can set
     // the natural width of the label in case monospace has no effect
     this._label = new St.Label({
-      x_align: Clutter.ActorAlign.START,
-      y_align: Clutter.ActorAlign.CENTER,
+      xAlign: Clutter.ActorAlign.START,
+      yAlign: Clutter.ActorAlign.CENTER,
       text: "100%",
-      style_class: "monospace",
+      styleClass: "monospace",
     });
 
-    this._label.natural_width = this._label.width;
+    this._label.naturalWidth = this._label.width;
     this._label.text = "";
 
     this.add_child(this._label);
@@ -269,13 +269,13 @@ class BatteryInfoWidgetClass extends St.BoxLayout {
   setPercentage(value: number | null) {
     if (value == null) {
       this._label.text = "";
-      this._icon.icon_name = "battery-missing-symbolic";
+      this._icon.iconName = "battery-missing-symbolic";
     } else {
       this._label.text = `${value}%`;
 
       const fillLevel = 10 * Math.floor(value / 10);
       const iconName = `battery-level-${fillLevel}-symbolic`;
-      this._icon.icon_name = iconName;
+      this._icon.iconName = iconName;
     }
   }
 }
