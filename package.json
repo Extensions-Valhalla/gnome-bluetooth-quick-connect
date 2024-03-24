@@ -15,11 +15,11 @@
   },
   "sideEffects": false,
   "devDependencies": {
-    "@biomejs/biome": "^1.5.3",
-    "@girs/gjs": "^3.2.7",
+    "@biomejs/biome": "^1.6.2",
+    "@girs/gjs": "^3.2.9",
     "@girs/gnome-shell": "45.0.0-beta8",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.3",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.3",
     "zx": "^7.2.3"
   }
 }
