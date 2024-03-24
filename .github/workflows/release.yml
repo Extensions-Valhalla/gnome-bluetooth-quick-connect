@@ -26,11 +26,6 @@ jobs:
           cache: "pnpm"
           node-version: "20"
 
-      - name: Add Gnome Extension Tools 🧩
-        run: |
-          sudo apt update 
-          sudo apt install -y gnome-shell-extensions
-
       - name: Install Dependencies 📥
         run: pnpm install
 
@@ -40,7 +35,7 @@ jobs:
       - name: Release 🚀
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*.shell-extension.zip
+          files: dist/shell-extension.zip
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ github.ref }}
           body: "Release ${{ github.ref }}"

@@ -30,7 +30,7 @@ jobs:
         run: pnpm install
 
       - name: Build 🏗
-        run: pnpm build -- --no-bundle
+        run: pnpm build
 
       - name: Lint 🧹
         run: pnpm lint
