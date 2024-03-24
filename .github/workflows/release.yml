@@ -28,8 +28,8 @@ jobs:
 
       - name: Add Gnome Extension Tools 🧩
         run: |
-          apt update 
-          apt install -y gnome-shell-extensions
+          sudo apt update 
+          sudo apt install -y gnome-shell-extensions
 
       - name: Install Dependencies 📥
         run: pnpm install
