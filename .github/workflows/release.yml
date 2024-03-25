@@ -19,8 +19,8 @@ jobs:
       - name: Checkout Code 🛎
         uses: actions/checkout@v4
 
-      - name: Update pacman 📦
-        run: pacman -Sy --noconfirm gnome-shell-extensions gettext nodejs pnpm
+      - name: Setup pacman 📦
+        run: pacman -Syu --noconfirm gnome-shell-extensions gettext nodejs pnpm
 
       - name: Install Dependencies 📥
         run: pnpm install
