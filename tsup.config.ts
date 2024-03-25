@@ -27,7 +27,11 @@ export default defineConfig({
     ].join("\n"),
   },
   onSuccess: async () => {
+    if (process.argv.includes("--no-pack")) return;
     await fs.copy("./assets", "./dist");
-    await $`cd dist && glib-compile-schemas schemas && zip -r ./shell-extension.zip . -9r`;
+    const files = (await fs.readdir("./dist"))
+      .filter((f) => fs.statSync(`./dist/${f}`).isFile())
+      .map((file) => `--extra-source=./${file}`);
+    await $`cd dist && gnome-extensions pack -f ${files} -o ./`;
   },
 });

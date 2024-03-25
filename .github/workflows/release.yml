@@ -8,6 +8,10 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      volumes:
+        - /:/host
     permissions:
       contents: write
 
@@ -15,16 +19,8 @@ jobs:
       - name: Checkout Code 🛎
         uses: actions/checkout@v4
 
-      - name: Setup pnpm 📦
-        uses: pnpm/action-setup@v2
-        with:
-          version: "8"
-
-      - name: Setup Node.js 🟩
-        uses: actions/setup-node@v4
-        with:
-          cache: "pnpm"
-          node-version: "20"
+      - name: Update pacman 📦
+        run: pacman -Sy --noconfirm gnome-shell-extensions gettext nodejs pnpm
 
       - name: Install Dependencies 📥
         run: pnpm install
@@ -35,7 +31,7 @@ jobs:
       - name: Release 🚀
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/shell-extension.zip
+          files: dist/*.zip
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ github.ref_name }}
           body: "Release ${{ github.ref_name }}"
