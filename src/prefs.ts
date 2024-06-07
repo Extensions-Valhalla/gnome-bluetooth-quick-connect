@@ -23,20 +23,19 @@ export default class BluetoothQuickConnectPreferences extends ExtensionPreferenc
     this._widget = this._builder.get_object("items_container") as Gtk.Widget;
 
     this._builder.get_object("auto_power_off_settings_button")?.connect("clicked", () => {
-      const dialog = new Gtk.Dialog({
+      const dialog = new Adw.Window({
         title: "Auto power off settings",
         // @ts-expect-error, wrong types maybe
         transient_for: this._widget?.get_ancestor(Gtk.Window),
-        // @ts-expect-error, technical limitation, uses boolean
-        use_header_bar: true,
         modal: true,
+        default_width: 600,
       });
 
-      const box = this._builder?.get_object("auto_power_off_settings") as Gtk.Box;
-      dialog.get_content_area().append(box);
+      const toolbarview = this._builder?.get_object("auto_power_off_settings") as Adw.ToolbarView;
+      dialog.set_content(toolbarview);
 
-      dialog.connect("response", (dialog) => {
-        dialog.get_content_area().remove(box);
+      dialog.connect("close-request", (dialog) => {
+        dialog.set_content(null);
         dialog.destroy();
       });
 

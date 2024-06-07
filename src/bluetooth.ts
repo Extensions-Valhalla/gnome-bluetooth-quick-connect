@@ -12,7 +12,7 @@ export default class BluetoothController extends Signals.EventEmitter {
     super();
     this._client = new GnomeBluetooth.Client();
     this._deviceNotifyConnected = new Set();
-    this._store = this._client.get_devices();
+    this._store = this._client.get_devices() as Gio.ListStore<GnomeBluetooth.Device>;
   }
 
   enable() {
