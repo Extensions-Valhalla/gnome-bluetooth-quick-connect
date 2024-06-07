@@ -35,7 +35,7 @@ export class PopupSwitchWithButtonMenuItem extends PopupMenu.PopupSwitchMenuItem
   ) {
     const label = device.alias || device.name || "(unknown)";
 
-    super(label, device.connected, {});
+    super(label, device.connected);
 
     this._handleIcon(device);
 
@@ -246,7 +246,7 @@ class BatteryInfoWidgetClass extends St.BoxLayout {
 
     this._icon = new St.Icon({ styleClass: "popup-menu-icon" });
     this.add_child(this._icon);
-    this._icon.iconName = null;
+    this._icon.iconName = "battery-missing-symbolic";
 
     // dirty trick: instantiate the label with text 100%, so we can set
     // the natural width of the label in case monospace has no effect
