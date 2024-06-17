@@ -1,15 +1,15 @@
 # Russian Translations for Bluetooth Quick Connect.
 # Copyright (C) 2023 Extensions Valhalla
 # This file is distributed under the same license as the Bluetooth Quick Connect package.
-# a1exak <a1.kamaev@yandex.ru>, 2023.
+# a1exak <a1exak@outlook.com>, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-07 14:31+0530\n"
-"PO-Revision-Date: 2023-11-07 14:31+0530\n"
-"Last-Translator: a1exak <a1.kamaev@yandex.ru>\n"
+"POT-Creation-Date: 2024-06-17 21:24+0530\n"
+"PO-Revision-Date: 2024-06-17 21:24+0530\n"
+"Last-Translator: a1exak <a1exak@outlook.com>\n"
 "Language-Team: \n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -32,7 +32,7 @@ msgstr "Включить bluetooth при открытии меню"
 
 #: Settings.ui:172
 msgid "Disable bluetooth if idle"
-msgstr "Отключить bluetooth, если он простаивает"
+msgstr "Отключать bluetooth, если он простаивает"
 
 #: Settings.ui:255
 msgid "Keep the menu open after toggling the connection (restart required)"
